@@ -28,9 +28,23 @@ jobs:
           cd dist
           zip -r ../worker-dist.zip .
 
-      # 5. 上传 ZIP 作为 Artifact
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
+      # …上面步骤相同…
+      # 5. 创建或更新 Release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         with:
-          name: worker-dist
-          path: worker-dist.zip
+          tag_name: dist-${{ github.sha }}
+          release_name: Worker dist at ${{ github.sha }}
+          draft: true
+          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 6. 上传 ZIP 到 Release
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: worker-dist.zip
+          asset_name: worker-dist.zip
+          asset_content_type: application/zip
