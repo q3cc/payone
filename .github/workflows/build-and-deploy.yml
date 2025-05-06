@@ -11,6 +11,10 @@ jobs:
 
     steps:
 
+      # 1. 检出仓库
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       # 2. 安装 wasm-pack
       - name: Install wasm-pack
         run: |
