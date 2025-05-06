@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       # 1. 检出仓库
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,21 +31,23 @@ jobs:
           cd dist
           zip -r ../worker-dist.zip .
 
-      # …上面步骤相同…
-      # 5. 创建或更新 Release
+      # 5. 创建一个 Draft Release
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: dist-${{ github.sha }}
           release_name: Worker dist at ${{ github.sha }}
           draft: true
           prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      # 6. 上传 ZIP 到 Release
+      # 6. 上传 ZIP 到上一步创建的 Release
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: worker-dist.zip
