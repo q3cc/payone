@@ -1,12 +1,14 @@
-name: Build & Deploy Worker
+name: Build & Package Worker
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  build-and-package:
     runs-on: ubuntu-latest
+
     steps:
       # 1. 检出仓库
       - name: Checkout repository
@@ -23,24 +25,15 @@ jobs:
         run: |
           wasm-pack build --target web --release --out-dir ../dist
 
-      # 4. 准备 metadata.json
-      - name: Prepare metadata
+      # 4. 打包 dist/ 为 ZIP
+      - name: Package dist into ZIP
         run: |
-          cat <<EOF > metadata.json
-          {
-            "main_module": "your_crate.js",
-            "compatibility_date": "2025-05-06"
-          }
-          EOF
+          cd dist
+          zip -r ../worker-dist.zip .
 
-      # 5. 上传到 Cloudflare
-      - name: Deploy to Cloudflare
-        env:
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        run: |
-          curl -X PUT "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts/<SCRIPT_NAME>" \
-            -H "Authorization: Bearer ${CF_API_TOKEN}" \
-            -F metadata=@metadata.json;type=application/json \
-            -F your_crate.js=@dist/your_crate.js;type=application/javascript+module \
-            -F your_crate_bg.wasm=@dist/your_crate_bg.wasm;type=application/wasm
+      # 5. 上传 ZIP 作为 Artifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: worker-dist
+          path: worker-dist.zip
