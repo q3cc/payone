@@ -33,7 +33,7 @@ jobs:
 
       # 5. 上传 ZIP 作为 Artifact
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: worker-dist
           path: worker-dist.zip
