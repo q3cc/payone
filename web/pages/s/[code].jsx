@@ -6,7 +6,7 @@ import Head from 'next/head';
 import QRCode from 'qrcode'
 
 import Section from "../../components/section";
-import channels from "../../../channels.json";
+import channels from "../../channels.json";
 import apis from "../../lib/api";
 import { getChannelByUA, getChannelByName, getCodeUrl, getBasePath } from '../../lib/utils';
 
