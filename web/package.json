@@ -1,6 +1,7 @@
 {
   "private": true,
   "license": "LA2",
+  "packageManager": "yarn@3.6.3",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
